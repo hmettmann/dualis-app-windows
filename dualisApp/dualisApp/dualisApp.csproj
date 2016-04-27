@@ -104,6 +104,7 @@
     <Compile Include="View\TestPage.xaml.cs">
       <DependentUpon>TestPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WebCrawler\Crawler.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -129,7 +130,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModel\" />
-    <Folder Include="WebCrawler\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClassLibrary1\WeekView.csproj">
