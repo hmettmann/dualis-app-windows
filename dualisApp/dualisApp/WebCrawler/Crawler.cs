@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq.Expressions;
-using System.Net;
-using System.Net.Http;
 using Windows.Web.Http;
-using HttpClient = System.Net.Http.HttpClient;
+using Windows.Web.Http.Filters;
 
 
 namespace dualisApp.WebCrawler
@@ -228,31 +225,40 @@ namespace dualisApp.WebCrawler
 
         public async void LogInRequest(String password)
         {
-            HttpClientHandler handler = new HttpClientHandler();
+            var filter = new HttpBaseProtocolFilter();
+            filter.AllowAutoRedirect = false;
             
-            var httpClient = new HttpClient(handler);
-           
+            var httpClient = new HttpClient(filter);
+          
             var uri = new Uri("https://dualis.dhbw.de/scripts/mgrqcgi?APPNAME=CampusNet&PRGNAME=EXTERNALPAGES&ARGUMENTS=-N000000000000001,-N000324,-Awelcome");
             //httpClient.DefaultRequestHeaders.Referrer = uri;
-
+            var relUri = new Uri(uri, "/scripts/mgrqcgi");
             // httpClient.DefaultRequestHeaders.Accept.Add(new HttpMediaTypeWithQualityHeaderValue("application/json"));
-            var content =  new MultipartFormDataContent();
-            content.Add(new StringContent("i14018@hb.dhbw-stuttgart.de"), "usrname");
-            content.Add(new StringContent("hales121)\""), "pass");
-            content.Add(new StringContent("CampusNet"), "APPNAME");
-            content.Add(new StringContent("LOGINCHECK"), "PRGNAME");
-            content.Add(new StringContent("clino,usrname,pass,menuno,menu_type,browser,platform"), "ARGUMENTS");
-            content.Add(new StringContent("000000000000001"), "clino");
-            content.Add(new StringContent("000324"), "menuno");
-            content.Add(new StringContent("classic"), "menu_type");
-            content.Add(new StringContent(""), "browser");
-            content.Add(new StringContent(""), "platform");
-           
-
-            var response = await httpClient.PostAsync(uri, content);
+            HttpRequestMessage msg = new HttpRequestMessage(HttpMethod.Post, relUri);
             
+            var content =  new HttpMultipartFormDataContent();
+            content.Add(new HttpStringContent("i14018@hb.dhbw-stuttgart.de"), "usrname");
+            content.Add(new HttpStringContent("hales121)\""), "pass");
+            content.Add(new HttpStringContent("CampusNet"), "APPNAME");
+            content.Add(new HttpStringContent("LOGINCHECK"), "PRGNAME");
+            content.Add(new HttpStringContent("clino,usrname,pass,menuno,menu_type,browser,platform"), "ARGUMENTS");
+            content.Add(new HttpStringContent("000000000000001"), "clino");
+            content.Add(new HttpStringContent("000324"), "menuno");
+            content.Add(new HttpStringContent("classic"), "menu_type");
+            content.Add(new HttpStringContent(""), "browser");
+            content.Add(new HttpStringContent(""), "platform");
+
+            msg.Content = content;
+            msg.Headers.Referer = uri;
+
+            var response = await httpClient.SendRequestAsync(msg);
+           
             // response.EnsureSuccessStatusCode();
             var res = await response.Content.ReadAsStringAsync();
+            foreach (var header in response.Headers)
+            {
+                var test = 1;
+            }
 
             String relativePath = "/scripts/mgrqcgi";
             //String email = activity.getSharedPreferences("LOGIN", Context.MODE_PRIVATE).getString("email", "unknown");
