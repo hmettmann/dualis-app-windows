@@ -1,0 +1,26 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:dualisApp.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ViewModel="using:dualisApp.ViewModel"
+    x:Class="dualisApp.View.WeekViewPage"
+    mc:Ignorable="d">
+    <Page.BottomAppBar>
+        <CommandBar>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Icon="Setting" Label="Einstellungen" Command="{Binding ShowSettingsViewCommand}" IsEnabled="{Binding IsPageEnabled}"/>
+            </CommandBar.SecondaryCommands>
+            <AppBarButton Icon="Refresh" Label="Aktualisieren" Command="{Binding UpdateDataCommand}" IsEnabled="{Binding IsPageEnabled}"/>
+            <AppBarButton Icon="CalendarDay" Label="Tag" Command="{Binding ShowDayViewCommand}" IsEnabled="{Binding IsPageEnabled}"/>
+            <AppBarButton Icon="CalendarWeek" Label="Woche" Command="{Binding ShowWeekViewCommand}" IsEnabled="{Binding IsPageEnabled}" Visibility="Collapsed"/>
+            <AppBarButton Icon="Calendar" Label="Monat" Command="{Binding ShowMonthViewCommand}" IsEnabled="{Binding IsPageEnabled}"/>
+        </CommandBar>
+
+    </Page.BottomAppBar>
+    <Page.DataContext>
+        <ViewModel:WeekViewPageViewModel/>
+    </Page.DataContext>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+</Page>

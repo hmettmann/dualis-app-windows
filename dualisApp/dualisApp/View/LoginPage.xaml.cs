@@ -29,6 +29,10 @@ namespace dualisApp.View
         {
             this.InitializeComponent();
             FrameNavigator.RegisterPage(typeof(LoginPage), typeof(LoginPageViewModel));
+            FrameNavigator.RegisterPage(typeof(DayListViewPage), typeof(DayListViewPageViewModel));
+            FrameNavigator.RegisterPage(typeof(MonthViewPage), typeof(MonthViewPageViewModel));
+            FrameNavigator.RegisterPage(typeof(WeekViewPage), typeof(WeekViewPageViewModel));
+            FrameNavigator.RegisterPage(typeof(SettingsPage), typeof(SettingsPageViewModel));
         }
     }
 }

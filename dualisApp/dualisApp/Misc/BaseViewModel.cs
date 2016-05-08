@@ -7,8 +7,11 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 using Windows.UI.Xaml;
 using dualisApp.Annotations;
 
@@ -19,28 +22,46 @@ namespace dualisApp.Misc
 	/// </summary>
 	public class BaseViewModel : INotifyPropertyChanged
     {
+        #region CommandHelper
+
+        protected void CanExecuteChanged(ICommand command)
+        {
+            var relayCommand = command as RelayCommand;
+            relayCommand?.RaiseCanExecuteChanged();
+        }
+
+        readonly List<RelayCommand> _listeningCommands = new List<RelayCommand>(); 
+
+        protected ICommand InitializeCommand(Action<object> executeAction, Predicate<object> canExecutePredicate, params string[] properties)
+        {
+            var newCommand = new RelayCommand(executeAction, canExecutePredicate, properties);
+            _listeningCommands.Add(newCommand);
+            return newCommand;
+        }
+
+        #endregion CommandHelper
 
         #region ProgressRing
 
-		/// <summary>
-		/// The _progress ring visibility.
-		/// </summary>
-		private Visibility _progressRingVisibility;
+        /// <summary>
+        /// The _progress ring visibility.
+        /// </summary>
+        private Visibility _progressRingVisibility;
 
-		/// <summary>
-		/// The _progress ring is active.
-		/// </summary>
-		private bool _progressRingIsActive;
+        /// <summary>
+        /// The _progress ring is active.
+        /// </summary>
+        private bool _progressRingIsActive;
 
-		/// <summary>
-		/// The _is page enabled.
-		/// </summary>
-		private bool _isPageEnabled;
+        /// <summary>
+        /// The _is page enabled.
+        /// </summary>
+        private bool _isPageEnabled;
 
-		/// <summary>
-		/// Gets or sets the progress ring visibility.
-		/// </summary>
-		public Visibility ProgressRingVisibility
+        /// <summary>
+        /// Gets or sets the progress ring visibility.
+        /// </summary>
+        public Visibility ProgressRingVisibility
         {
             get { return _progressRingVisibility; }
             set
@@ -53,10 +74,10 @@ namespace dualisApp.Misc
             }
         }
 
-		/// <summary>
-		/// Gets or sets a value indicating whether progress ring is active.
-		/// </summary>
-		public bool ProgressRingIsActive
+        /// <summary>
+        /// Gets or sets a value indicating whether progress ring is active.
+        /// </summary>
+        public bool ProgressRingIsActive
         {
             get { return _progressRingIsActive; }
             set
@@ -69,10 +90,10 @@ namespace dualisApp.Misc
             }
         }
 
-		/// <summary>
-		/// Gets or sets a value indicating whether is page enabled.
-		/// </summary>
-		public bool IsPageEnabled
+        /// <summary>
+        /// Gets or sets a value indicating whether is page enabled.
+        /// </summary>
+        public bool IsPageEnabled
         {
             get { return _isPageEnabled; }
             set
@@ -85,13 +106,13 @@ namespace dualisApp.Misc
             }
         }
 
-		/// <summary>
-		/// The set progress ring.
-		/// </summary>
-		/// <param name="activate">
-		/// The activate.
-		/// </param>
-		protected void SetProgressRing(bool activate)
+        /// <summary>
+        /// The set progress ring.
+        /// </summary>
+        /// <param name="activate">
+        /// The activate.
+        /// </param>
+        protected void SetProgressRing(bool activate)
         {
             ProgressRingIsActive = activate;
             IsPageEnabled = !activate;
@@ -102,21 +123,31 @@ namespace dualisApp.Misc
 
         #region PropertyChanged
 
-		/// <summary>
-		/// The property changed.
-		/// </summary>
-		public event PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// The property changed.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		/// <summary>
-		/// The on property changed.
-		/// </summary>
-		/// <param name="propertyName">
-		/// The property name.
-		/// </param>
-		[NotifyPropertyChangedInvocator]
+        /// <summary>
+        /// The on property changed.
+        /// </summary>
+        /// <param name="propertyName">
+        /// The property name.
+        /// </param>
+        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (_listeningCommands.Count > 0)
+            {
+                foreach (var listeningCommand in _listeningCommands)
+                {
+                    if (listeningCommand.CheckValueChangedProperties.Contains(propertyName))
+                    {
+                        CanExecuteChanged(listeningCommand);
+                    }
+                }
+            }
         }
 
         #endregion PropertyChanged

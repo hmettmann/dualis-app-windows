@@ -41,9 +41,9 @@ namespace dualisApp.ViewModel
 		/// </summary>
 		public LoginPageViewModel()
         {
-            LoginCommand = new RelayCommand(Login, CanLogin);
+            LoginCommand = InitializeCommand(Login, CanLogin, nameof(Password), nameof(Email));
 
-            //SetProgressRing(false);
+            SetProgressRing(false);
             //var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             //var autologin = localSettings.Values[nameof(AutoLogin)];
             //if (autologin != null && (autologin as bool?).Value)
@@ -68,7 +68,7 @@ namespace dualisApp.ViewModel
                 {
                     _password = value;
                     OnPropertyChanged();
-                    ((RelayCommand)LoginCommand).RaiseCanExecuteChanged();
+                    //CanExecuteChanged(LoginCommand);
                 }
             }
         }
@@ -85,7 +85,7 @@ namespace dualisApp.ViewModel
                 {
                     _email = value;
                     OnPropertyChanged();
-                    ((RelayCommand)LoginCommand).RaiseCanExecuteChanged();
+                    //CanExecuteChanged(LoginCommand);
                 }
             }
         }
@@ -106,7 +106,7 @@ namespace dualisApp.ViewModel
 		/// </returns>
 		public bool CanLogin(object obj)
         {
-            if (string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password))
+            if (!string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password))
             {
                 return true;
             }
@@ -120,8 +120,9 @@ namespace dualisApp.ViewModel
 		/// <param name="obj">
 		/// The obj.
 		/// </param>
-		public async void Login(object obj)
+		public void Login(object obj)
         {
+            FrameNavigator.NavigateTo(typeof(MonthViewPageViewModel));
             //SetProgressRing(true);
             //if (obj is Visibility && ((Visibility)obj) == Visibility.Collapsed)
             //{

@@ -8,6 +8,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 
 namespace dualisApp.Misc
@@ -27,6 +29,8 @@ namespace dualisApp.Misc
 		/// </summary>
 		private readonly Predicate<object> _canExecutePredicate;
 
+        public List<string> CheckValueChangedProperties = new List<string>(); 
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RelayCommand"/> class.
 		/// </summary>
@@ -42,13 +46,30 @@ namespace dualisApp.Misc
 			_canExecutePredicate = canExecutePredicate;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="RelayCommand"/> class.
-		/// </summary>
-		/// <param name="executeAction">
-		/// The execute action.
-		/// </param>
-		public RelayCommand(Action<object> executeAction)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RelayCommand"/> class.
+        /// </summary>
+        /// <param name="executeAction">
+        /// The execute action.
+        /// </param>
+        /// <param name="canExecutePredicate">
+        /// The can execute predicate.
+        /// </param>
+        /// <param name="properties"></param>
+        public RelayCommand(Action<object> executeAction, Predicate<object> canExecutePredicate, params string[] properties)
+        {
+            _executeAction = executeAction;
+            _canExecutePredicate = canExecutePredicate;
+            CheckValueChangedProperties = properties.ToList();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RelayCommand"/> class.
+        /// </summary>
+        /// <param name="executeAction">
+        /// The execute action.
+        /// </param>
+        public RelayCommand(Action<object> executeAction)
 			: this(executeAction, null)
 		{ }
 

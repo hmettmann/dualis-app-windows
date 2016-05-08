@@ -5,6 +5,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using dualisApp.Misc;
 using dualisApp.View;
 
 namespace dualisApp
@@ -77,6 +78,9 @@ namespace dualisApp
                 // parameter
                 rootFrame.Navigate(typeof(LoginPage), e.Arguments);
             }
+
+            FrameNavigator.ApplicationFrame = rootFrame;
+
             // Ensure the current window is active
             Window.Current.Activate();
         }
